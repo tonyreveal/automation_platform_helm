@@ -1,0 +1,22 @@
+{{- if .Values.consoleLink.enabled }}
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: {{ .Values.consoleLink.name }}
+  labels:
+{{- include "automation-platform.labels" . | nindent 4 }}
+  annotations:
+{{- include "automation-platform.annotations" . | nindent 4 }}
+{{- with .Values.consoleLink.annotations }}
+{{- toYaml . | nindent 4 }}
+{{- end }}
+spec:
+  applicationMenu:
+    section: {{ .Values.consoleLink.applicationMenu.section | quote }}
+{{- if .Values.consoleLink.imageURL }}
+  imageURL: {{ .Values.consoleLink.imageURL | quote }}
+{{- end }}
+  href: {{ .Values.consoleLink.href | quote }}
+  location: {{ .Values.consoleLink.location | quote }}
+  text: {{ .Values.consoleLink.text | quote }}
+{{- end }}

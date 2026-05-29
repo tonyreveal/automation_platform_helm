@@ -1,0 +1,20 @@
+{{- if .Values.operator.enabled }}
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: {{ .Values.operator.subscription.name }}
+  namespace: {{ include "automation-platform.namespace" . }}
+  labels:
+{{- include "automation-platform.labels" . | nindent 4 }}
+  annotations:
+{{- include "automation-platform.annotations" . | nindent 4 }}
+{{- with .Values.operator.subscription.annotations }}
+{{- toYaml . | nindent 4 }}
+{{- end }}
+spec:
+  channel: {{ .Values.operator.subscription.channel | quote }}
+  installPlanApproval: {{ .Values.operator.subscription.installPlanApproval }}
+  name: {{ .Values.operator.subscription.packageName }}
+  source: {{ .Values.operator.subscription.source }}
+  sourceNamespace: {{ .Values.operator.subscription.sourceNamespace }}
+{{- end }}

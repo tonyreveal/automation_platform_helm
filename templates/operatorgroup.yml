@@ -1,0 +1,25 @@
+{{- if and .Values.operator.enabled .Values.operator.operatorGroup.create }}
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ .Values.operator.operatorGroup.name }}
+  namespace: {{ include "automation-platform.namespace" . }}
+  labels:
+{{- include "automation-platform.labels" . | nindent 4 }}
+  annotations:
+{{- include "automation-platform.annotations" . | nindent 4 }}
+{{- with .Values.operator.operatorGroup.annotations }}
+{{- toYaml . | nindent 4 }}
+{{- end }}
+spec:
+{{- if not .Values.operator.operatorGroup.clusterScoped }}
+  targetNamespaces:
+{{- $ns := include "automation-platform.namespace" . }}
+{{- $targets := .Values.operator.operatorGroup.targetNamespaces | default (list $ns) }}
+{{- range $targets }}
+    - {{ . }}
+{{- end }}
+{{- else }}
+  {}
+{{- end }}
+{{- end }}

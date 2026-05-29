@@ -1,0 +1,19 @@
+{{- if .Values.platform.enabled }}
+apiVersion: aap.ansible.com/v1alpha1
+kind: AnsibleAutomationPlatform
+metadata:
+  name: {{ .Values.platform.name }}
+  namespace: {{ include "automation-platform.namespace" . }}
+  labels:
+{{- include "automation-platform.labels" . | nindent 4 }}
+{{- with .Values.platform.labels }}
+{{- toYaml . | nindent 4 }}
+{{- end }}
+  annotations:
+{{- include "automation-platform.annotations" . | nindent 4 }}
+{{- with .Values.platform.annotations }}
+{{- toYaml . | nindent 4 }}
+{{- end }}
+spec:
+{{- tpl (toYaml .Values.platform.spec) . | nindent 2 }}
+{{- end }}
