@@ -14,21 +14,19 @@ It includes:
 ## Render
 
 ```bash
-helm template aap ./automation-platform-chart --namespace aap
+helm template aap .
 ```
 
 ## Install / upgrade
 
 ```bash
-helm upgrade --install aap ./automation-platform-chart \
-  --namespace aap \
-  --create-namespace
+helm upgrade --install aap ./
 ```
 
 ## Switch operator channel
 
 ```bash
-helm upgrade --install aap ./automation-platform-chart \
+helm upgrade --install aap ./ \
   --namespace aap \
   --set operator.subscription.channel=stable-2.6
 ```
@@ -47,18 +45,6 @@ operator:
 operator:
   operatorGroup:
     clusterScoped: true
-```
-
-## Argo CD application source example
-
-```yaml
-source:
-  repoURL: https://github.com/tonyreveal/automation_platform_helm.git
-  targetRevision: main
-  path: charts/automation-platform
-  helm:
-    valueFiles:
-      - values.yaml
 ```
 
 ## Security note
