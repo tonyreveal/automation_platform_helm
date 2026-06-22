@@ -1,5 +1,5 @@
 global:
-  namespace: automation-platform-external-db
+  namespace: aap
   commonAnnotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 

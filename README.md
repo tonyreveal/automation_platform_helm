@@ -14,14 +14,14 @@ It includes:
 ## Render
 
 ```bash
-helm template aap ./automation-platform-chart --namespace automation-platform-external-db
+helm template aap ./automation-platform-chart --namespace aap
 ```
 
 ## Install / upgrade
 
 ```bash
 helm upgrade --install aap ./automation-platform-chart \
-  --namespace automation-platform-external-db \
+  --namespace aap \
   --create-namespace
 ```
 
@@ -29,7 +29,7 @@ helm upgrade --install aap ./automation-platform-chart \
 
 ```bash
 helm upgrade --install aap ./automation-platform-chart \
-  --namespace automation-platform-external-db \
+  --namespace aap \
   --set operator.subscription.channel=stable-2.6
 ```
 
