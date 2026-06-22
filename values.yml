@@ -1,5 +1,5 @@
 global:
-  namespace: aap
+  namespace: aap-helm-test
   commonAnnotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 
@@ -8,23 +8,17 @@ namespace:
   name: "" # defaults to global.namespace
   labels:
     openshift.io/cluster-monitoring: "true"
-  annotations:
-    argocd.argoproj.io/sync-wave: "-20"
 
 operator:
   enabled: true
   operatorGroup:
     create: true
     name: ansible-automation-platform-operator
-    annotations:
-      argocd.argoproj.io/sync-wave: "-10"
     # Set clusterScoped=true to omit targetNamespaces.
     clusterScoped: false
     targetNamespaces: [] # defaults to global.namespace when not clusterScoped
   subscription:
     name: ansible-automation-platform
-    annotations:
-      argocd.argoproj.io/sync-wave: "-5"
     channel: stable-2.6
     installPlanApproval: Automatic
     packageName: ansible-automation-platform-operator
@@ -33,11 +27,9 @@ operator:
 
 secrets:
   enabled: true
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
   externalDatabases:
     controller-db-secret:
-      host: trrpostgres.texasroadracing.com
+      host: trrhelmpg.texasroadracing.com
       port: "5432"
       database: automationcontroller
       username: automationcontroller
@@ -45,7 +37,7 @@ secrets:
       sslmode: prefer
       type: unmanaged
     eda-db-secret:
-      host: trrpostgres.texasroadracing.com
+      host: trrhelmpg.texasroadracing.com
       port: "5432"
       database: automationeda
       username: automationeda
@@ -53,7 +45,7 @@ secrets:
       sslmode: prefer
       type: unmanaged
     gateway-db-secret:
-      host: trrpostgres.texasroadracing.com
+      host: trrhelmpg.texasroadracing.com
       port: "5432"
       database: automationgateway
       username: automationgateway
@@ -61,23 +53,17 @@ secrets:
       sslmode: prefer
       type: unmanaged
     hub-db-secret:
-      host: trrpostgres.texasroadracing.com
+      host: trrhelmpg.texasroadracing.com
       port: "5432"
       database: automationhub
       username: automationhub
       password: automationhub
       sslmode: prefer
       type: unmanaged
-    redis-secret:
-      host: redis.texasroadracing.com
-      port: "6379"
-      password: redis
 
 platform:
   enabled: true
   name: aap
-  annotations:
-    argocd.argoproj.io/sync-wave: "5"
   labels:
     app.kubernetes.io/managed-by: aap-operator
     app.kubernetes.io/name: aap
@@ -90,19 +76,17 @@ platform:
     ingress_type: Route
     no_log: false
     image_pull_policy: Always
-    hostname: aapextdb.apps.trrocp4.texasroadracing.com
+    hostname: aaphelm.apps.trrocp4.texasroadracing.com
     api:
       log_level: INFO
       replicas: 1
-      route_host: aapextdb.apps.trrocp4.texasroadracing.com
+      route_host: aaphelm.apps.trrocp4.texasroadracing.com
     database:
       postgres_data_volume_init: false
       database_secret: gateway-db-secret
-    redis_mode: cluster
+    redis_mode: standalone
     redis:
-      replicas: 6
-      # external: true
-      # redis_secret: redis-secret
+      replicas: 1
     hub:
       file_storage_storage_class: nfs-client
       redis_storage_class: nfs-client
@@ -116,13 +100,13 @@ platform:
       allow_write_operations: true
       disabled: false
 
-consoleLink:
-  enabled: true
-  name: aap
-  annotations: {}
-  applicationMenu:
-    section: Red Hat applications
-  imageURL: "" # optional data:image/png;base64,...
-  href: https://automationplatform.apps.trrocp4.texasroadracing.com/
-  location: ApplicationMenu
-  text: AAP
+# consoleLink:
+#   enabled: true
+#   name: aap
+#   annotations: {}
+#   applicationMenu:
+#     section: Red Hat applications
+#   imageURL: "" # optional data:image/png;base64,...
+#   href: https://automationplatform.apps.trrocp4.texasroadracing.com/
+#   location: ApplicationMenu
+#   text: AAP
