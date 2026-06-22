@@ -1,0 +1,100 @@
+global:
+  namespace: aap-helm-test
+  commonAnnotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+
+namespace:
+  create: true
+  name: "" # defaults to global.namespace
+  labels:
+    openshift.io/cluster-monitoring: "true"
+
+operator:
+  enabled: true
+  operatorGroup:
+    create: true
+    name: ansible-automation-platform-operator
+    # Set clusterScoped=true to omit targetNamespaces.
+    clusterScoped: false
+    targetNamespaces: [] # defaults to global.namespace when not clusterScoped
+  subscription:
+    name: ansible-automation-platform
+    channel: stable-2.6
+    installPlanApproval: manual
+    packageName: ansible-automation-platform-operator
+    source: redhat-operators
+    sourceNamespace: openshift-marketplace
+
+secrets:
+  enabled: true
+  externalDatabases:
+    controller-db-secret:
+      host: trrhelmpg.texasroadracing.com
+      port: "5432"
+      database: automationcontroller
+      username: automationcontroller
+      password: automationcontroller
+      sslmode: prefer
+      type: unmanaged
+    eda-db-secret:
+      host: trrhelmpg.texasroadracing.com
+      port: "5432"
+      database: automationeda
+      username: automationeda
+      password: automationeda
+      sslmode: prefer
+      type: unmanaged
+    gateway-db-secret:
+      host: trrhelmpg.texasroadracing.com
+      port: "5432"
+      database: automationgateway
+      username: automationgateway
+      password: automationgateway
+      sslmode: prefer
+      type: unmanaged
+    hub-db-secret:
+      host: trrhelmpg.texasroadracing.com
+      port: "5432"
+      database: automationhub
+      username: automationhub
+      password: automationhub
+      sslmode: prefer
+      type: unmanaged
+
+platform:
+  enabled: true
+  name: aap
+  labels:
+    app.kubernetes.io/managed-by: aap-operator
+    app.kubernetes.io/name: aap
+    app.kubernetes.io/operator-version: "2.6"
+    app.kubernetes.io/part-of: aap
+  spec:
+    route_tls_termination_mechanism: Edge
+    service_type: ClusterIP
+    ingress_type: Route
+    no_log: false
+    image_pull_policy: Always
+    hostname: aaphelm.apps.trrocp4.texasroadracing.com
+    route_host: aaphelm.apps.trrocp4.texasroadracing.com
+    api:
+      log_level: INFO
+      replicas: 1
+    database:
+      postgres_data_volume_init: false
+      database_secret: gateway-db-secret
+    redis_mode: standalone
+    redis:
+      replicas: 1
+    hub:
+      file_storage_storage_class: nfs-client
+      redis_storage_class: nfs-client
+      postgres_configuration_secret: hub-db-secret
+    controller:
+      postgres_configuration_secret: controller-db-secret
+    eda:
+      database:
+        database_secret: eda-db-secret
+    mcp:
+      allow_write_operations: true
+      disabled: false
